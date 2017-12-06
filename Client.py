@@ -9,12 +9,6 @@ CACHE_FILE_NAME = "cache-"
 CACHE_FILE_EXT = ".jpg"
 
 class Client:
-
-    SETUP_STR = 'SETUP'
-    PLAY_STR = 'PLAY'
-    PAUSE_STR = 'PAUSE'
-    TEARDOWN_STR = 'TEARDOWN'
-
     INIT = 0
     READY = 1
     PLAYING = 2
@@ -24,10 +18,6 @@ class Client:
     PLAY = 1
     PAUSE = 2
     TEARDOWN = 3
-
-    RTSP_VER = "RTSP/1.0"
-    TRANSPORT = "RTP/UDP"
-
 
     # Initiation..
     def __init__(self, master, serveraddr, serverport, rtpport, filename):
@@ -162,40 +152,43 @@ class Client:
             threading.Thread(target=self.recvRtspReply).start()
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq+=1
+            self.rtspSeq = self.rtspSeq + 1;
 
             # Write the RTSP request to be sent.
-            request = "%s %s %s" % (self.SETUP_STR,self.fileName,self.RTSP_VER)
-            request+="\nCSeq: %d" % self.rtspSeq
-            request+="\nTransport: %s; client_port= %d" % (self.TRANSPORT,self.rtpPort)
+			# request = ...            
+            request = "%s %s %s" % (self.SETUP_STR,self.fileName,self.RTSP_VER);
+            request += "\nCSeq: %d" % self.rtspSeq;
+            request += "\nTransport: %s; client_port= %d" % (self.TRANSPORT,self.rtpPort);
 
             # Keep track of the sent request.
-            self.requestSent = self.SETUP
+            # self.requestSent = ...
+            self.requestSent = self.SETUP;
 
-            # Play request
+        # Play request
         elif requestCode == self.PLAY and self.state == self.READY:
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq+=1
+            self.rtspSeq = self.rtspSeq + 1;
 
             # Write the RTSP request to be sent.
+            # request = ...
             request = "%s %s %s" % (self.PLAY_STR,self.fileName,self.RTSP_VER)
-            request+="\nCSeq: %d" % self.rtspSeq
-            request+="\nSession: %d"%self.sessionId
+            request += "\nCSeq: %d" % self.rtspSeq
+            request += "\nSession: %d"%self.sessionId
 
             # Keep track of the sent request.
             self.requestSent = self.PLAY
 
 
-            # Pause request
+        # Pause request
         elif requestCode == self.PAUSE and self.state == self.PLAYING:
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq+=1
+            self.rtspSeq = self.rtspSeq + 1;
 
             request = "%s %s %s" % (self.PAUSE_STR,self.fileName,self.RTSP_VER)
-            request+="\nCSeq: %d" % self.rtspSeq
-            request+="\nSession: %d"%self.sessionId
+            request += "\nCSeq: %d" % self.rtspSeq
+            request += "\nSession: %d"%self.sessionId
 
             self.requestSent = self.PAUSE
 
@@ -203,7 +196,7 @@ class Client:
         elif requestCode == self.TEARDOWN and not self.state == self.INIT:
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq+=1
+            self.rtspSeq = self.rtspSeq + 1;
 
             # Write the RTSP request to be sent.
             request = "%s %s %s" % (self.TEARDOWN_STR,self.fileName,self.RTSP_VER)
@@ -284,7 +277,7 @@ class Client:
 
         try:
         # Bind the socket to the address using the RTP port given by the client user
-            self.state=self.READY
+            self.state = self.READY
             self.rtpSocket.bind(('',self.rtpPort))
         except:
             tkMessageBox.showwarning('Unable to Bind', 'Unable to bind PORT=%d' %self.rtpPort)
