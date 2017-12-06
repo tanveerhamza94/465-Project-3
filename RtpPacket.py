@@ -28,12 +28,12 @@ class RtpPacket:
 		header[2] = (seqnum & 0xFF00) >> 8; # 16 bits total, this is first 8
 		header[3] = (seqnum & 0xFF); # second 8
 		header[4] = (timestamp >> 24); # 32 bit timestamp
-		header[5] = (timestamp >> 16); & 0xFF;
-		header[6] = (timestamp >> 8); & 0xFF;
+		header[5] = (timestamp >> 16) & 0xFF;
+		header[6] = (timestamp >> 8) & 0xFF;
 		header[7] = (timestamp & 0xFF);
 		header[8] = (ssrc >> 24); # 32 bit ssrc
-		header[9] = (ssrc >> 16); & 0xFF;
-		header[10] = (ssrc >> 8); & 0xFF;
+		header[9] = (ssrc >> 16) & 0xFF;
+		header[10] = (ssrc >> 8) & 0xFF;
 		header[11] = ssrc & 0xFF;
 		
 		# Get the payload from the argument
