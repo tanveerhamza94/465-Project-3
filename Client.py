@@ -19,6 +19,7 @@ class Client:
     PAUSE = 2
     TEARDOWN = 3
 
+
     # Initiation..
     def __init__(self, master, serveraddr, serverport, rtpport, filename):
         self.master = master
@@ -131,7 +132,7 @@ class Client:
         """Update the image file as video frame in the GUI."""
         photo = ImageTk.PhotoImage(Image.open(imageFile))
         self.label.configure(image = photo, height=288)
-	self.label.image = photo
+        self.label.image = photo
 
     def connectToServer(self):
         """Connect to the Server. Start a new RTSP/TCP session."""
@@ -156,9 +157,9 @@ class Client:
 
             # Write the RTSP request to be sent.
 			# request = ...            
-            request = "%s %s %s" % (self.SETUP_STR,self.fileName,self.RTSP_VER);
+            request = "%s %s" % (self.SETUP,self.fileName);
             request += "\nCSeq: %d" % self.rtspSeq;
-            request += "\nTransport: %s; client_port= %d" % (self.TRANSPORT,self.rtpPort);
+            request += "\nClient_port= %d" % (self.rtpPort);
 
             # Keep track of the sent request.
             # self.requestSent = ...
@@ -172,7 +173,7 @@ class Client:
 
             # Write the RTSP request to be sent.
             # request = ...
-            request = "%s %s %s" % (self.PLAY_STR,self.fileName,self.RTSP_VER)
+            request = "%s %s %s" % (self.PLAY,self.fileName)
             request += "\nCSeq: %d" % self.rtspSeq
             request += "\nSession: %d"%self.sessionId
 
@@ -186,7 +187,7 @@ class Client:
             # ...
             self.rtspSeq = self.rtspSeq + 1;
 
-            request = "%s %s %s" % (self.PAUSE_STR,self.fileName,self.RTSP_VER)
+            request = "%s %s %s" % (self.PAUSE,self.fileName)
             request += "\nCSeq: %d" % self.rtspSeq
             request += "\nSession: %d"%self.sessionId
 
@@ -199,7 +200,7 @@ class Client:
             self.rtspSeq = self.rtspSeq + 1;
 
             # Write the RTSP request to be sent.
-            request = "%s %s %s" % (self.TEARDOWN_STR,self.fileName,self.RTSP_VER)
+            request = "%s %s %s" % (self.TEARDOWN,self.fileName)
             request+="\nCSeq: %d" % self.rtspSeq
             request+="\nSession: %d"%self.sessionId
 
