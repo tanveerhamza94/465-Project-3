@@ -8,6 +8,7 @@ from RtpPacket import RtpPacket
 CACHE_FILE_NAME = "cache-"
 CACHE_FILE_EXT = ".jpg"
 
+
 class Client:
     INIT = 0
     READY = 1
@@ -18,6 +19,9 @@ class Client:
     PLAY = 1
     PAUSE = 2
     TEARDOWN = 3
+
+    RTSP_VER = "RTSP/1.0"
+
 
 
     # Initiation..
@@ -153,28 +157,29 @@ class Client:
             threading.Thread(target=self.recvRtspReply).start()
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq = self.rtspSeq + 1;
+            self.rtspSeq += 1
 
             # Write the RTSP request to be sent.
-			# request = ...            
-            request = "%s %s" % (self.SETUP,self.fileName);
-            request += "\nCSeq: %d" % self.rtspSeq;
-            request += "\nClient_port= %d" % (self.rtpPort);
+            # request = ...            
+            request = "setup %s" % self.fileName
+            request += "\nSeq # %d" % self.rtspSeq
+            request += "\nClient_port = %d" % (self.rtpPort)
 
             # Keep track of the sent request.
             # self.requestSent = ...
-            self.requestSent = self.SETUP;
+            self.requestSent = self.SETUP
 
         # Play request
         elif requestCode == self.PLAY and self.state == self.READY:
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq = self.rtspSeq + 1;
+            self.rtspSeq += 1
 
             # Write the RTSP request to be sent.
             # request = ...
-            request = "%s %s %s" % (self.PLAY,self.fileName)
-            request += "\nCSeq: %d" % self.rtspSeq
+
+            request = "play %s" % self.fileName
+            request += "\nSeq # %d" % self.rtspSeq
             request += "\nSession: %d"%self.sessionId
 
             # Keep track of the sent request.
@@ -185,11 +190,11 @@ class Client:
         elif requestCode == self.PAUSE and self.state == self.PLAYING:
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq = self.rtspSeq + 1;
+            self.rtspSeq += 1
 
-            request = "%s %s %s" % (self.PAUSE,self.fileName)
-            request += "\nCSeq: %d" % self.rtspSeq
-            request += "\nSession: %d"%self.sessionId
+            request = "pause %s" % self.fileName
+            request += "\nSeq # %d" % self.rtspSeq
+            request += "\nSession: %d" % self.sessionId
 
             self.requestSent = self.PAUSE
 
@@ -197,12 +202,12 @@ class Client:
         elif requestCode == self.TEARDOWN and not self.state == self.INIT:
             # Update RTSP sequence number.
             # ...
-            self.rtspSeq = self.rtspSeq + 1;
+            self.rtspSeq += 1
 
             # Write the RTSP request to be sent.
-            request = "%s %s %s" % (self.TEARDOWN,self.fileName)
-            request+="\nCSeq: %d" % self.rtspSeq
-            request+="\nSession: %d"%self.sessionId
+            request = "teardown %s" % self.fileName
+            request += "\nSeq # %d" % self.rtspSeq
+            request += "\nSession: %d" % self.sessionId
 
 
             self.requestSent = self.TEARDOWN
@@ -213,7 +218,7 @@ class Client:
         # ...
         self.rtspSocket.send(request)
 
-        print '\nData sent:\n' + request
+        print '\nData sent: ' + request
 
     def recvRtspReply(self):
         """Receive RTSP reply from the server."""
@@ -250,13 +255,18 @@ class Client:
                         #-------------
                         # Update RTSP state.
                         self.state = self.READY
+                        print "setup"
+
 
                         # Open RTP port.
                         self.openRtpPort()
                     elif self.requestSent == self.PLAY:
                         self.state=self.PLAYING
+                        print "play"
+
                     elif self.requestSent == self.PAUSE:
                         self.state=self.READY
+                        print "pause"
                         # The play thread exits. A new thread is created on resume.
                         self.playEvent.set()
                     elif self.requestSent == self.TEARDOWN:
