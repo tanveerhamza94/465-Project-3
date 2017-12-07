@@ -20,7 +20,8 @@ class Client:
     PAUSE = 2
     TEARDOWN = 3
 
-    RTSP_VER = "RTSP/1.0"
+    Transport = "UDP"
+    Version = "RTSP/1.0"
 
 
 
@@ -161,9 +162,9 @@ class Client:
 
             # Write the RTSP request to be sent.
             # request = ...            
-            request = "setup %s" % self.fileName
-            request += "\nSeq # %d" % self.rtspSeq
-            request += "\nClient_port = %d" % (self.rtpPort)
+            request = "SETUP %s %s" % (self.fileName, self.Version)
+            request += "\nCSeq: %d" % self.rtspSeq
+            request += "\nTransport: %s; client_port= %d" % (self.Transport,self.rtpPort)
 
             # Keep track of the sent request.
             # self.requestSent = ...
@@ -178,8 +179,8 @@ class Client:
             # Write the RTSP request to be sent.
             # request = ...
 
-            request = "play %s" % self.fileName
-            request += "\nSeq # %d" % self.rtspSeq
+            request = "PLAY %s %s" % (self.fileName, self.Version)
+            request += "\nCSeq: %d" % self.rtspSeq
             request += "\nSession: %d"%self.sessionId
 
             # Keep track of the sent request.
@@ -192,8 +193,8 @@ class Client:
             # ...
             self.rtspSeq += 1
 
-            request = "pause %s" % self.fileName
-            request += "\nSeq # %d" % self.rtspSeq
+            request = "PAUSE %s %s" % (self.fileName, self.Version)
+            request += "\nCSeq: %d" % self.rtspSeq
             request += "\nSession: %d" % self.sessionId
 
             self.requestSent = self.PAUSE
@@ -205,8 +206,8 @@ class Client:
             self.rtspSeq += 1
 
             # Write the RTSP request to be sent.
-            request = "teardown %s" % self.fileName
-            request += "\nSeq # %d" % self.rtspSeq
+            request = "TEARDOWN %s %s" % (self.fileName, self.Version)
+            request += "\nCSeq: %d" % self.rtspSeq
             request += "\nSession: %d" % self.sessionId
 
 
